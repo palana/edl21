@@ -1,0 +1,34 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Sync manifest version with release tag and publish zip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set manifest version from tag
+        run: |
+          tag="${GITHUB_REF##*/}"
+          version="${tag#v}"
+          jq --arg v "$version" '.version = $v' \
+            custom_components/edl21/manifest.json > /tmp/manifest.json
+          mv /tmp/manifest.json custom_components/edl21/manifest.json
+          cat custom_components/edl21/manifest.json
+
+      - name: Zip integration folder
+        run: |
+          cd custom_components/edl21
+          zip -r ../../edl21.zip .
+
+      - name: Upload zip to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: edl21.zip

@@ -1,0 +1,6 @@
+{
+  "name": "EDL21 (custom interval + pysml buffer fix)",
+  "render_readme": true,
+  "homeassistant": "2024.4.0",
+  "country": ["DE", "AT", "CH"]
+}

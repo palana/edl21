@@ -59,9 +59,9 @@ Then restart Home Assistant and proceed from step 4 above.
 This integration is set up entirely through the UI. After adding the
 integration, the **Configure** button on the device card exposes:
 
-| Option | Default | Notes |
-| --- | --- | --- |
-| Scan interval (seconds) | 10 | Per-entity update throttle. Smaller values give more detail but a larger recorder history table. |
+| Option                  | Default | Notes                                                                                            |
+| ----------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| Scan interval (seconds) | 10      | Per-entity update throttle. Smaller values give more detail but a larger recorder history table. |
 
 The serial port is set in the initial add step and can be changed by
 removing and re-adding the integration.
@@ -112,7 +112,7 @@ The patch is idempotent and is a no-op if pysml is not installed.
 ## Compatibility
 
 - Minimum Home Assistant Core: **2024.4.0**.
-- Supported pysml: **0.1.5** (pinned in `manifest.json`).
+- Supported pysml: **0.1.6** (pinned in `manifest.json`).
 - Supported serialx: **>= 1.0.0**.
 
 ## Credits and derivation

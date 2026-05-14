@@ -1,31 +1,21 @@
 """The edl21 custom integration.
 
 This integration is a drop-in replacement for the core ``edl21`` component
-with three differences:
+with two differences:
 
-1. It swaps ``pyserial-asyncio-fast`` (pulled in transitively by pysml)
-   for `serialx <https://github.com/puddly/serialx>`_ via
-   ``serialx.patch_pyserial()``.
-2. It exposes a configurable scan interval through the options flow
+1. It exposes a configurable scan interval through the options flow
    (default 10 s; minimum 1 s) instead of the hard-coded 60 s entity
    update throttle.
-3. It applies a runtime patch to ``pysml.asyncio.SmlSerialProtocol``
+2. It applies a runtime patch to ``pysml.asyncio.SmlSerialProtocol``
    that bounds the receive buffer and forces a reconnect on a stuck
    parser — workaround for
    `home-assistant/core#169980
    <https://github.com/home-assistant/core/issues/169980>`_.
+
+Note: serialx integration is pending upstream pysml porting.
 """
 
 from __future__ import annotations
-
-# IMPORTANT: ``serialx.patch_pyserial()`` has to run before anything
-# in this process imports ``sml.asyncio`` (which transitively imports
-# ``serial_asyncio_fast``). Running it at module-top guarantees that
-# Home Assistant's platform loader sees a patched ``serial_asyncio``
-# by the time it imports ``.sensor`` below.
-import serialx
-
-serialx.patch_pyserial()
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform

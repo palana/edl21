@@ -1,22 +1,20 @@
 # hass-edl21
 
 A HACS-installable drop-in replacement for the Home Assistant Core
-`edl21` integration with three changes:
+`edl21` integration with two key improvements:
 
-1. **serialx instead of pyserial-asyncio-fast.** The integration calls
-   [`serialx.patch_pyserial()`](https://github.com/puddly/serialx)
-   at startup so pysml's transitive serial backend is redirected to
-   [puddly/serialx](https://github.com/puddly/serialx), which is the
-   library Home Assistant Core is migrating to (see
-   [Serious about serial][serialx-blog]).
-2. **Configurable scan interval.** Adds an options-flow knob
+1. **Configurable scan interval.** Adds an options-flow knob
    (Settings → Devices & Services → EDL21 → **Configure**) that
    overrides Core's hard-coded 60-second update throttle. Default is
    **10 seconds**; minimum 1 s, maximum 3600 s.
-3. **pysml buffer fix.** Bundles a runtime patch on
+2. **pysml buffer fix.** Bundles a runtime patch on
    `pysml.asyncio.SmlSerialProtocol.data_received` that bounds the
    receive buffer and forces a reconnect on a stuck parser —
    workaround for [home-assistant/core#169980][issue-169980].
+
+**Future:** serialx integration is pending upstream pysml porting to use
+serialx as its serial backend (see [puddly/serialx](https://github.com/puddly/serialx)
+and the [migration guide][serialx-blog)).
 
 The integration registers under the same domain as core (`edl21`),
 so installing it will cause Home Assistant to log
@@ -66,17 +64,7 @@ integration, the **Configure** button on the device card exposes:
 The serial port is set in the initial add step and can be changed by
 removing and re-adding the integration.
 
-## How the three changes work
-
-### serialx swap
-
-The integration imports `serialx` and calls `patch_pyserial()` at the
-top of its `__init__.py`, **before** anything imports
-`sml.asyncio`. From that point on, any code that does
-`import serial_asyncio_fast` (including pysml's internals) actually
-gets serialx. `serialx` is added as an explicit requirement in
-`manifest.json`; `pysml`'s own dependency on `pyserial-asyncio-fast`
-is left in place but unused at runtime.
+## How the improvements work
 
 ### Configurable scan interval
 
@@ -113,7 +101,6 @@ The patch is idempotent and is a no-op if pysml is not installed.
 
 - Minimum Home Assistant Core: **2024.4.0**.
 - Supported pysml: **0.1.6** (pinned in `manifest.json`).
-- Supported serialx: **>= 1.0.0**.
 
 ## Credits and derivation
 
@@ -125,7 +112,7 @@ Apache 2.0). The pysml runtime patch is adapted from a community
 comment on [issue #169980][issue-169980].
 
 This is not an official Home Assistant integration and is not
-maintained by the Home Assistant project, pysml, or serialx.
+maintained by the Home Assistant project or pysml.
 
 ## License
 
